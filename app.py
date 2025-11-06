@@ -65,8 +65,7 @@ df_clean["next_gw_points"] = df_clean.groupby("player_id")["event_points_gw"].sh
 for col in ["event_points_gw", "goals_scored_gw", "assists_gw", "expected_goals_gw", "expected_assists_gw"]:
     if col in df_clean.columns:
         df_clean[f"{col}_roll3"] = (
-            df_clean.groupby("player_id")[col]
-            .transform(lambda x: x.rolling(3, min_periods=1).mean())
+            df_clean.groupby("player_id")[col].transform(lambda x: x.rolling(3, min_periods=1).mean())
         )
 
 team_form = (
@@ -161,7 +160,7 @@ if player_name:
         else:
             same_pos = df_clean.copy()
 
-    replacements = (
+        replacements = (
             same_pos.groupby("web_name")["predicted_points"]
             .mean()
             .reset_index()
@@ -183,4 +182,5 @@ top5 = top_players.head(5)
 st.dataframe(top5.style.background_gradient("Oranges").format({"predicted_points": "{:.2f}"}))
 
 st.caption("✅ Model retrains and updates each refresh using the latest GitHub data.")
+
 
