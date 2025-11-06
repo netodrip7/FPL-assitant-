@@ -19,7 +19,7 @@ base_url = "https://raw.githubusercontent.com/olbauday/FPL-Elo-Insights/main/dat
 by_tournament = f"{base_url}/By%20Tournament/Premier%20League"
 urls = {
     "teams": f"{base_url}/teams.csv",
-    "players": f"{by_tournament}/GW11/players.csv",  # snapshot
+    "players": f"{by_tournament}/GW11/players.csv",
     "playerstats": f"{base_url}/playerstats.csv",
     "gameweek_summaries": f"{base_url}/gameweek_summaries.csv",
 }
@@ -64,7 +64,8 @@ df_clean["next_gw_points"] = df_clean.groupby("player_id")["event_points_gw"].sh
 for col in ["event_points_gw", "goals_scored_gw", "assists_gw", "expected_goals_gw", "expected_assists_gw"]:
     if col in df_clean.columns:
         df_clean[f"{col}_roll3"] = (
-            df_clean.groupby("player_id")[col].transform(lambda x: x.rolling(3, min_periods=1).mean())
+            df_clean.groupby("player_id")[col]
+            .transform(lambda x: x.rolling(3, min_periods=1).mean())
         )
 
 team_form = (
@@ -121,11 +122,15 @@ top_players = (
 col1, col2 = st.columns(2)
 with col1:
     st.subheader("🏟️ Top 10 Teams (Avg Points per GW)")
-    st.dataframe(top_teams.style.background_gradient("Greens").format({"team_avg_points": "{:.2f}"}))
+    st.dataframe(
+        top_teams.style.background_gradient("Greens").format({"team_avg_points": "{:.2f}"})
+    )
 
 with col2:
     st.subheader("🔥 Top 10 Players (Predicted Points)")
-    st.dataframe(top_players.style.background_gradient("Blues").format({"predicted_points": "{:.2f}"}))
+    st.dataframe(
+        top_players.style.background_gradient("Blues").format({"predicted_points": "{:.2f}"})
+    )
 
 # ------------------------------------------------------------
 # 🧍 PLAYER INPUT & RECOMMENDATION
@@ -137,11 +142,12 @@ player_name = st.text_input("Enter Player Name (case insensitive):")
 
 if player_name:
     player_match = df_clean[df_clean["web_name"].str.contains(player_name, case=False, na=False)]
+
     if not player_match.empty:
         avg_pred = float(player_match["predicted_points"].mean())
         st.success(f"**{player_name.title()}** predicted next GW points: **{avg_pred:.2f}**")
 
-        # Simple recommendation
+        # Recommendation logic
         if avg_pred >= 7:
             rec = "Start"
         elif avg_pred >= 5:
@@ -150,13 +156,15 @@ if player_name:
             rec = "Sell"
         st.info(f"Recommended Action: **{rec}**")
 
-        # Replacements (same position)
+        # Replacements
         pos_cols = [c for c in df_clean.columns if "element_type" in c.lower() or "position" in c.lower()]
         pos_col = pos_cols[0] if pos_cols else None
+
         if pos_col and pos_col in df_clean.columns:
             same_pos = df_clean[df_clean[pos_col] == player_match[pos_col].iloc[0]]
         else:
             same_pos = df_clean.copy()
+
         replacements = (
             same_pos.groupby("web_name")["predicted_points"]
             .mean()
@@ -164,8 +172,12 @@ if player_name:
             .sort_values("predicted_points", ascending=False)
             .head(5)
         )
+
         st.markdown(f"### 🧩 Suggested Replacements for {player_name.title()}")
-        st.dataframe(replacements.style.background_gradient("Purples").format({"predicted_points": "{:.2f}"}))
+        st.dataframe(
+            replacements.style.background_gradient("Purples").format({"predicted_points": "{:.2f}"})
+        )
+
     else:
         st.warning("⚠️ Player not found. Please check spelling.")
 
@@ -177,4 +189,4 @@ st.subheader("⭐ Top 5 Predicted Performers")
 top5 = top_players.head(5)
 st.dataframe(top5.style.background_gradient("Oranges").format({"predicted_points": "{:.2f}"}))
 
-st.caption("✅ Model retrains and updates with each refresh using latest GitHub data.")
+st.caption("✅ Model retrains and updates each refresh using the latest GitHub data.")
