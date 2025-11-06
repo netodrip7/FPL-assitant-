@@ -231,7 +231,7 @@ if player_name:
         )
 
        if "now_cost" not in same_pos.columns:
-    same_pos["now_cost"] = np.random.uniform(40, 120, len(same_pos))  # fallback in £m *10
+         same_pos["now_cost"] = np.random.uniform(40, 120, len(same_pos))  # fallback in £m *10
 
        replacements_cost = (
        same_pos.groupby(["web_name", "now_cost"], dropna=False)["predicted_points"]
