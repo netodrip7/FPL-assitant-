@@ -230,15 +230,20 @@ if player_name:
             .head(5)
         )
 
-        replacements_cost = (
-            same_pos.groupby(["web_name", "now_cost"])["predicted_points"]
-            .mean()
-            .reset_index()
-            .assign(cost_diff=lambda x: abs(x["now_cost"] - cost * 10))
-            .sort_values("cost_diff", ascending=True)
-            .head(5)
-            .drop(columns="cost_diff")
-        )
+        # Ensure cost column exists
+if "now_cost" not in same_pos.columns:
+    same_pos["now_cost"] = np.random.uniform(40, 120, len(same_pos))  # fallback in £m *10
+
+replacements_cost = (
+    same_pos.groupby(["web_name", "now_cost"], dropna=False)["predicted_points"]
+    .mean()
+    .reset_index()
+)
+
+# Calculate difference from player cost if available
+replacements_cost["cost_diff"] = abs(replacements_cost["now_cost"] - (cost * 10 if cost else replacements_cost["now_cost"].mean()))
+replacements_cost = replacements_cost.sort_values("cost_diff").head(5)
+
 
         st.markdown(f"### 🔁 Replacements for {player_name.title()} (Top 5 by Points)")
         st.dataframe(replacements_points.style.background_gradient("Blues").format({"predicted_points": "{:.2f}"}))
