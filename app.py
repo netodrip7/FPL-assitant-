@@ -230,18 +230,22 @@ if player_name:
             .head(5)
         )
 
-       if "now_cost" not in same_pos.columns:
-         same_pos["now_cost"] = np.random.uniform(40, 120, len(same_pos))  # fallback in £m *10
+             # --- REPLACEMENTS (cost-based) ---
+        # Ensure cost column exists
+        if "now_cost" not in same_pos.columns:
+            same_pos["now_cost"] = np.random.uniform(40, 120, len(same_pos))  # fallback in £m *10
 
-       replacements_cost = (
-       same_pos.groupby(["web_name", "now_cost"], dropna=False)["predicted_points"]
-       .mean()
-       .reset_index()
+        replacements_cost = (
+            same_pos.groupby(["web_name", "now_cost"], dropna=False)["predicted_points"]
+            .mean()
+            .reset_index()
         )
 
-# Calculate difference from player cost if available
-       replacements_cost["cost_diff"] = abs(replacements_cost["now_cost"] - (cost * 10 if cost else replacements_cost["now_cost"].mean()))
-       replacements_cost = replacements_cost.sort_values("cost_diff").head(5)
+        # Calculate difference from player cost if available
+        replacements_cost["cost_diff"] = abs(
+            replacements_cost["now_cost"] - (cost * 10 if cost else replacements_cost["now_cost"].mean())
+        )
+        replacements_cost = replacements_cost.sort_values("cost_diff").head(5)
 
 
 
