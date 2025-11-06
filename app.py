@@ -94,14 +94,29 @@ df_clean["predicted_points"] = model.predict(X)
 # ------------------------------------------------------------
 # 🏆 RANKINGS
 # ------------------------------------------------------------
-top_players = (
-    df_clean.groupby(["player_id", "web_name"])["predicted_points"]
-    .mean().reset_index().sort_values("predicted_points", ascending=False).head(10)
+# ------------------------------------------------------------
+# 🏆 RANKINGS
+# ------------------------------------------------------------
+# Detect team name column dynamically
+possible_team_cols = [c for c in df_clean.columns if "team" in c.lower() and "id" not in c.lower()]
+team_col = possible_team_cols[0] if possible_team_cols else "team_id"
+
+# Group by detected team column
+top_teams = (
+    df_clean.groupby(team_col)["event_points_gw"]
+    .mean()
+    .reset_index()
+    .sort_values("event_points_gw", ascending=False)
+    .head(10)
 )
 
-top_teams = (
-    df_clean.groupby("team_name")["event_points_gw"]
-    .mean().reset_index().sort_values("event_points_gw", ascending=False).head(10)
+# Player ranking (unchanged)
+top_players = (
+    df_clean.groupby(["player_id", "web_name"])["predicted_points"]
+    .mean()
+    .reset_index()
+    .sort_values("predicted_points", ascending=False)
+    .head(10)
 )
 
 # ------------------------------------------------------------
