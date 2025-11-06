@@ -148,7 +148,15 @@ if player_name:
         st.success(f"**{player_name.title()}** predicted score: **{player_points:.2f} pts**")
 
         st.markdown(f"### Suggested Replacements for {player_name.title()}")
-        same_position = df_clean[df_clean["element_type"] == player_match["element_type"].iloc[0]]
+        # Find which column looks like position info
+position_cols = [c for c in df_clean.columns if "element_type" in c.lower() or "position" in c.lower()]
+pos_col = position_cols[0] if position_cols else None
+
+if pos_col and pos_col in df_clean.columns:
+    same_position = df_clean[df_clean[pos_col] == player_match[pos_col].iloc[0]]
+else:
+    same_position = df_clean.copy()  # fallback: show all players if no position column
+
         replacements = (
             same_position.groupby("web_name")["predicted_points"]
             .mean().reset_index().sort_values("predicted_points", ascending=False).head(5)
