@@ -125,10 +125,10 @@ top_players = (
 col1, col2 = st.columns(2)
 with col1:
     st.subheader("🏟️ Top 10 Teams (by Avg Points)")
-    st.dataframe(top_teams.style.background_gradient("Greens").format({"event_points_gw": "{:.2f}"}))
+    st.dataframe(top_teams)
 with col2:
     st.subheader("🔥 Top 10 Players (Predicted Points)")
-    st.dataframe(top_players.style.background_gradient("Blues").format({"predicted_points": "{:.2f}"}))
+    st.dataframe(top_players)
 
 # ------------------------------------------------------------
 # 💬 PLAYER INPUT SECTION
