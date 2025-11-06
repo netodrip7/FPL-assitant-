@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
-import matplotlib  # required for pandas Styler gradient
+import matplotlib  # required for Styler background_gradient
 
 # ------------------------------------------------------------
 # 🎯 PAGE SETUP
@@ -40,14 +40,15 @@ def load_data():
             gw_data.append(df)
         except Exception:
             pass
-    player_gw_stats = pd.concat(gw_data, ignore_index=True)
 
+    player_gw_stats = pd.concat(gw_data, ignore_index=True)
     player_gw_stats = player_gw_stats.rename(columns={"id": "player_id"})
     playerstats = playerstats.rename(columns={"id": "player_id"})
     teams = teams.rename(columns={"id": "team_id"})
 
     merged = (
-        player_gw_stats.merge(playerstats, on="player_id", suffixes=("_gw", "_season"))
+        player_gw_stats
+        .merge(playerstats, on="player_id", suffixes=("_gw", "_season"))
         .merge(players, on="player_id", how="left")
         .merge(teams, left_on="team_code", right_on="team_id", how="left", suffixes=("", "_team"))
     )
@@ -83,7 +84,7 @@ else:
 df_clean = df_clean.dropna(subset=["next_gw_points"])
 
 # ------------------------------------------------------------
-# ⚙️ MODEL TRAINING (XGBoost)
+# ⚙️ MODEL TRAINING
 # ------------------------------------------------------------
 feature_cols = [c for c in df_clean.columns if c.endswith("_gw") or c.endswith("_roll3") or "team" in c]
 X = df_clean[feature_cols].select_dtypes(include=[np.number]).fillna(0)
@@ -122,15 +123,10 @@ top_players = (
 col1, col2 = st.columns(2)
 with col1:
     st.subheader("🏟️ Top 10 Teams (Avg Points per GW)")
-    st.dataframe(
-        top_teams.style.background_gradient("Greens").format({"team_avg_points": "{:.2f}"})
-    )
-
+    st.dataframe(top_teams.style.background_gradient("Greens").format({"team_avg_points": "{:.2f}"}))
 with col2:
     st.subheader("🔥 Top 10 Players (Predicted Points)")
-    st.dataframe(
-        top_players.style.background_gradient("Blues").format({"predicted_points": "{:.2f}"})
-    )
+    st.dataframe(top_players.style.background_gradient("Blues").format({"predicted_points": "{:.2f}"}))
 
 # ------------------------------------------------------------
 # 🧍 PLAYER INPUT & RECOMMENDATION
@@ -174,10 +170,7 @@ if player_name:
         )
 
         st.markdown(f"### 🧩 Suggested Replacements for {player_name.title()}")
-        st.dataframe(
-            replacements.style.background_gradient("Purples").format({"predicted_points": "{:.2f}"})
-        )
-
+        st.dataframe(replacements.style.background_gradient("Purples").format({"predicted_points": "{:.2f}"}))
     else:
         st.warning("⚠️ Player not found. Please check spelling.")
 
@@ -190,3 +183,4 @@ top5 = top_players.head(5)
 st.dataframe(top5.style.background_gradient("Oranges").format({"predicted_points": "{:.2f}"}))
 
 st.caption("✅ Model retrains and updates each refresh using the latest GitHub data.")
+
