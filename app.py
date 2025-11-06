@@ -161,7 +161,7 @@ if player_name:
         else:
             same_pos = df_clean.copy()
 
-        replacements = (
+    replacements = (
             same_pos.groupby("web_name")["predicted_points"]
             .mean()
             .reset_index()
