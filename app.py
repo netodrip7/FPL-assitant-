@@ -184,3 +184,4 @@ st.dataframe(top5.style.background_gradient("Oranges").format({"predicted_points
 st.caption("✅ Model retrains and updates each refresh using the latest GitHub data.")
 
 
+
