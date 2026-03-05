@@ -3,11 +3,13 @@
 # ============================================================
 
 import streamlit as st
-import pandas as pd
-import numpy as np
-from xgboost import XGBRegressor
-from sklearn.model_selection import train_test_split
-import matplotlib  # needed for pandas Styler color maps
+try:
+    import pandas as pd
+    import numpy as np
+    from xgboost import XGBRegressor
+    from sklearn.model_selection import train_test_split
+    import matplotlib
+    # needed for pandas Styler color maps
 
 # ============================================================
 # 🎯 PAGE CONFIGURATION
@@ -270,5 +272,8 @@ st.dataframe(top5.style.background_gradient("Oranges").format({"predicted_points
 
 st.caption("✅ Model retrains and updates each refresh using the latest FPL-Elo-Insights data.")
 
+except Exception as e:
+    st.error("⚠️ App failed to load fully, but the dashboard is being fixed.")
+    st.write("Temporary debug info:", e)
 
 
