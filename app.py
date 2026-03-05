@@ -91,13 +91,19 @@ df_clean = df_clean.dropna(subset=["next_gw_points"])
 # ============================================================
 # ⚙️ MODEL TRAINING
 # ============================================================
+@st.cache_resource
+def train_model(X_train, y_train):
+    model = XGBRegressor(n_estimators=300, learning_rate=0.05, max_depth=6, random_state=42)
+    model.fit(X_train, y_train)
+    return model
+
 feature_cols = [c for c in df_clean.columns if c.endswith("_gw") or c.endswith("_roll3") or "team" in c]
 X = df_clean[feature_cols].select_dtypes(include=[np.number]).fillna(0)
 y = df_clean["next_gw_points"]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-model = XGBRegressor(n_estimators=300, learning_rate=0.05, max_depth=6, random_state=42)
-model.fit(X_train, y_train)
+
+model = train_model(X_train, y_train)
 df_clean["predicted_points"] = model.predict(X)
 
 # ============================================================
