@@ -1,7 +1,7 @@
 streamlit==1.32.2
 altair==4.2.2
-pandas
-numpy
-scikit-learn
-xgboost
-requests
+pandas==2.2.2
+numpy==1.26.4
+scikit-learn==1.4.2
+xgboost==2.0.3
+requests==2.31.0
