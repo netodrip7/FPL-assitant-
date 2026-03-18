@@ -32,11 +32,11 @@ def run_pipeline():
     teams = teams.rename(columns={"id": "team_id"})
 
     df = (
-        player_gw_stats
-        .merge(playerstats, on="player_id")
-        .merge(players, on="player_id", how="left")
-        .merge(teams, left_on="team_code", right_on="team_id", how="left")
-    )
+    player_gw_stats
+    .merge(playerstats, on="player_id", suffixes=("_gw", "_season"))
+    .merge(players, on="player_id", how="left")
+    .merge(teams, left_on="team_code", right_on="team_id", how="left")
+)
 
     # CLEAN
     df = df.drop(columns=df.columns[df.isnull().mean() > 0.6])
