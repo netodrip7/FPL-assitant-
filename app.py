@@ -8,8 +8,20 @@ import unicodedata
 # ⚡ LOAD PRE-PROCESSED DATA (FAST)
 # ===============================================
 
+
+
+
+st.write("🚀 App starting...")
+
 url = "https://raw.githubusercontent.com/netodrip7/stats-merchant/main/final_data.parquet"
-df = pd.read_parquet(url)
+
+try:
+    df = pd.read_parquet(url)
+    st.write("✅ Data loaded successfully")
+    st.write(df.shape)
+except Exception as e:
+    st.error(f"❌ Error loading data: {e}")
+    st.stop()
 
 # ===============================================
 # 🎨 PAGE CONFIG
