@@ -784,5 +784,35 @@ print(f"✅ Latest gameweek in your dataset: GW{int(latest_gw)}")
 # If you kept df_latest from the last code:
 print(f"🧠 Predictions are based on latest available data — most likely for GW{int(latest_gw + 1)} (the next gameweek).")
 
-df_clean.to_parquet("final_data.parquet", index=False)
-print("✅ Saved final_data.parquet")
+# ===============================================
+# ⚡ MAKE DATA LIGHTWEIGHT (CRITICAL)
+# ===============================================
+
+df_latest = (
+    df_clean.sort_values(['player_id', 'gameweek'], ascending=[True, False])
+    .drop_duplicates('player_id', keep='first')
+)
+
+cols_to_keep = [
+    'player_id',
+    'first_name_gw',
+    'second_name_gw',
+    'web_name_gw',
+    'team_name_final',
+    'position',
+    'predicted_next_points',
+    'value_for_money',
+    'form_gw',
+    'recommendation',
+    'opp_difficulty_proxy'
+]
+
+cols_to_keep = [c for c in cols_to_keep if c in df_latest.columns]
+
+df_latest = df_latest[cols_to_keep]
+
+df_latest.to_parquet("final_data.parquet", index=False)
+
+print("✅ Saved LIGHTWEIGHT final_data.parquet")
+print("Rows:", df_latest.shape[0])
+print("Columns:", df_latest.shape[1])
