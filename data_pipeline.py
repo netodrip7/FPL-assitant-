@@ -556,7 +556,7 @@ print(team_mapping)
 
 def detect_fixtures_df():
     candidates = []
-    for name, obj in globals().items():
+    for name, obj in list(globals().items()):
         if isinstance(obj, pd.DataFrame):
             # Convert all column names to strings safely
             cols = set(map(str.lower, map(str, obj.columns)))
