@@ -190,4 +190,33 @@ team_pts = (
     .sum().sort_values(ascending=False)
 )
 st.dataframe(team_pts)
+import requests
+import pandas as pd
+import streamlit as st
 
+st.subheader("📅 Upcoming Fixtures")
+
+try:
+    url = "https://fantasy.premierleague.com/api/fixtures/"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        fixtures = pd.DataFrame(response.json())
+
+        # Filter upcoming fixtures
+        fixtures = fixtures[fixtures['finished'] == False]
+
+        # Get next gameweek
+        next_gw = fixtures['event'].min()
+
+        gw_fixtures = fixtures[fixtures['event'] == next_gw]
+
+        # Show simple table
+        st.write(f"Gameweek {int(next_gw)} Fixtures")
+        st.dataframe(gw_fixtures[['team_h', 'team_a']])
+
+    else:
+        st.warning("Could not load fixtures")
+
+except:
+    st.warning("⚠️ Fixtures unavailable right now")
