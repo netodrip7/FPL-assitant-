@@ -600,8 +600,8 @@ if fixtures_df is not None and latest_gw and not team_map.empty:
         [['home_team', 'Home Team Name', 'Home Short Name', 'away_team', 'Away Team Name', 'Away Short Name']]
     )
 
-  print(f"\n📋 Fixtures for Gameweek {latest_gw}:")
-  print(gw_fixtures)
+    print(f"\n📋 Fixtures for Gameweek {latest_gw}:")
+    print(gw_fixtures)
 else:
     print("⚠️ Could not generate fixtures — fixture or team mapping missing.")
 for name, obj in globals().items():
