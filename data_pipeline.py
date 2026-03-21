@@ -1,5 +1,5 @@
 import pandas as pd
-base_url = "https://raw.githubusercontent.com/olbauday/FPL-Elo-Insights/main/data/2025-2026"
+base_url = "https://github.com/olbauday/FPL-Core-Insights.git"
 by_tournament = f"{base_url}/By%20Tournament/Premier%20League"
 urls = {
     "teams": f"{base_url}/teams.csv",
